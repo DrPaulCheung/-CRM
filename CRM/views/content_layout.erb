@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>管理系统</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content=""><!-- Bootstrap core CSS -->
+    <!-- Bootstrap core CSS -->
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/kendo.common-material.min.css" />
+
+    <link rel="stylesheet" href="css/kendo.material.min.css" />
+
+    <link rel="stylesheet" href="css/kendo.default.mobile.min.css" />
+
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="css/ionicons.min.css" rel="stylesheet">
+    
+    <link href="css/simplify.min.css" rel="stylesheet">
+
+
+    <!-- Jquery -->
+    <script src="js/jquery.min.js"></script>
+    <!-- Slimscroll -->
+    <script src='js/jquery.slimscroll.min.js'></script>
+
+    <!-- Popup Overlay -->
+    <script src='js/jquery.popupoverlay.min.js'></script>
+
+    <!-- Bootstrap -->
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- <script src="http://cdn.static.runoob.com/libs/angular.js/1.4.6/angular.min.js"></script> -->
+
+    <script src="js/angular.min.js"></script>
+
+    <script src="js/kendo.all.min.js"></script>
+
+    <script src="js/kendo.timezones.min.js"></script>
+
+    <script src="js/kendo.messages.zh-CN.js"></script>
+
+    <script src="js/kendo.culture.zh-CN.js"></script>
+
+
+
+    <script type="text/javascript"> 
+
+      var layoutApp = angular.module('layoutApp', []);
+      layoutApp.controller('layoutController', function($scope, $http) {
+          $http.get("/getMyAttribute")
+          .success(function(response) {console.log($scope.User = response)});
+
+
+      });
+
+    </script>
+</head> 
+
+<body class="overflow-hidden">
+
+    <div class="wrapper preload" >
+      <header id="nav-header" class="top-nav" ng-app="layoutApp" ng-controller="layoutController">
+        <div class="top-nav-inner">
+          <div class="nav-header">
+            <button type="button" class="navbar-toggle pull-left sidebar-toggle" id="sidebarToggleSM">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            
+            <ul class="nav-notification pull-right">
+              <li>
+                <a href="/index" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cog fa-lg"></i></a>
+                <span class="badge badge-danger bounceIn">1</span>
+                <ul class="dropdown-menu dropdown-sm pull-right">
+
+                  <li class="user-avatar">
+                    <img ng-if="User.user_sex == '男' " src="img/head/male.png" alt="" class="img-circle">
+                    <img ng-if="User.user_sex == '女' " src="img/head/female.png" alt="" class="img-circle">
+                    <div class="user-content">
+                      <h5 class="no-m-bottom">{{User.user_name}}</h5>
+                      <div class="m-top-xs">
+                        <a href="" class="m-right-sm">我的信息</a>
+                        <a href="/logout">登出</a>
+                      </div>
+                    </div>
+                  </li>
+          
+                </ul>
+              </li>
+            </ul>
+            
+            <a href="" class="brand">
+              <img src="img/logo.png" width="30px" height="30px" alt="">
+              <span class="brand-name">多维空间探讨</span>
+            </a>
+          </div>
+
+
+          <div class="nav-container">
+            <button type="button" class="navbar-toggle pull-left sidebar-toggle" id="sidebarToggleLG">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+
+            <div class="pull-right m-right-sm">
+              <div class="user-block hidden-xs">
+
+                <a href="#" id="userToggle" data-toggle="dropdown">
+
+                  <img ng-if="User.user_sex == '男' " src="img/head/male.png" alt="" class="img-circle inline-block user-profile-pic"  >
+                  <img ng-if="User.user_sex == '女' " src="img/head/female.png" alt="" class="img-circle inline-block user-profile-pic"  >
+                  <div class="user-detail inline-block">
+                    {{User.user_name}}
+                    <i class="fa fa-angle-down"></i>
+                  </div>
+                </a>
+
+
+
+                <div class="panel border dropdown-menu user-panel">
+                  <div class="panel-body paddingTB-sm">
+                    <ul>
+                      <li>
+                        <a href="">
+                          <i class="fa fa-edit fa-lg"></i><span class="m-left-xs">我的信息</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="/logout">
+                          <i class="fa fa-power-off fa-lg"></i><span class="m-left-xs">退出</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div><!-- ./top-nav-inner -->  
+      </header>
+
+
+      <aside class="sidebar-menu fixed">
+        <div class="sidebar-inner scrollable-sidebar">
+          <div class="main-menu">
+            <ul class="accordion">
+              <li class="menu-header">
+                Main Menu
+              </li>
+              <li class="bg-palette1 <% if @current == "dashboard" %> active <%end%>">
+                <a href="/index">
+                  <span class="menu-content block">
+                    <span class="menu-icon"><i class="block fa fa-home fa-lg"></i></span>
+                    <span class="text m-left-sm">工作台</span>
+                  </span>
+                  <span class="menu-content-hover block">
+                    工作台
+                  </span>
+                </a>
+              </li>
+
+              <li class="openable bg-palette1">
+                <a href="">
+                  <span class="menu-content block">
+                    <span class="menu-icon"><i class="block fa fa-envelope fa-lg"></i></span>
+                    <span class="text m-left-sm">消息</span>
+                    <small class="badge badge-danger badge-square bounceIn animation-delay5 m-left-xs">1</small>
+                  </span>
+                  <span class="menu-content-hover block">
+                    消息
+                  </span>
+                </a>
+              </li>
+
+              <li class="openable bg-palette2 <% if @current == "employee" %> open <%end%>">
+                <a href="#">
+                  <span class="menu-content block">
+                    <span class="menu-icon"><i class="block fa fa-users fa-lg"></i></span>
+                    <span class="text m-left-sm">人事管理</span>
+                    <span class="submenu-icon"></span>
+                  </span>
+                  <span class="menu-content-hover block">
+                    人事管理
+                  </span>
+                </a>
+
+                <ul class="submenu bg-palette3">
+                  <li class = "<% if @active == "recruit" %> active <%end%>" ><a href="/recruit"><span class="submenu-label">招聘管理</span></a></li>
+                  <li class = "<% if @active == "employee" %> active <%end%>" ><a href="/employee"><span class="submenu-label">职员管理</span></a></li>
+                  <li><a href=""><span class="submenu-label">绩效管理</span></a></li>
+                  <li><a href=""><span class="submenu-label">考勤管理</span></a></li>
+                </ul>
+
+              </li>
+
+              <li class="bg-palette3">
+                <a href="">
+                  <span class="menu-content block">
+                    <span class="menu-icon"><i class="block fa fa-desktop fa-lg"></i></span>
+                    <span class="text m-left-sm">设备管理</span>
+                  </span>
+                  <span class="menu-content-hover block">
+                    设备管理
+                  </span>
+                </a>
+              </li>
+
+              <li class="openable bg-palette4 <% if @current == "finance" %> open <%end%>">
+                <a href="">
+                  <span class="menu-content block">
+                    <span class="menu-icon"><i class="block fa fa-credit-card fa-lg"></i></span>
+                    <span class="text m-left-sm">财务管理</span>
+
+                    <span class="submenu-icon"></span>
+                  </span>
+                  <span class="menu-content-hover block">
+                    财务管理
+                  </span>
+                </a>
+
+                <ul class="submenu bg-palette3">
+                  <li class = "<% if @active == "reimburse" %> active <%end%>" ><a href=""><span class="submenu-label">付款申请</span></a></li>
+                  <li class = "<% if @active == "reimburse" %> active <%end%>" > <a href="/reimburse"><span class="submenu-label">报销申请</span></a></li>
+                </ul>
+              </li>
+              
+              
+            </ul>
+          </div>  
+
+          <div class="sidebar-fix-bottom clearfix">
+            <div class="user-dropdown dropup pull-left">
+            <a href="lockscreen.html" class="pull-right font-18"><i class="ion-log-out"></i></a>
+          </div>
+        </div><!-- sidebar-inner -->
+      </aside>
+      
+      <div class="main-container">
+        <%= yield %>
+      </div><!-- /main-container -->
+    </div><!-- /wrapper -->
+
+    
+
+    <!-- Modernizr -->
+    <script src='js/modernizr.min.js'></script>
+
+    <!-- Simplify -->
+    <script src="js/simplify/simplify.js"></script>
+
+
+
+</body>
+
+
+</html>

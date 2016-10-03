@@ -1,0 +1,217 @@
+
+<div id="example" class="col-lg-12" >
+    <div id="employeegrid"></div>
+</div>
+
+<div class = "col-lg-6">
+    <div class="smart-widget">
+        <div class="smart-widget-header">
+            年龄分布
+        </div>
+        <dir id="chart"></dir>
+    </div>
+</div>
+
+<div class = "col-lg-6">
+    <div class="smart-widget">
+        <div class="smart-widget-header">
+            性别比例
+        </div>
+        <dir id="sexchart"></dir>
+    </div>
+</div>
+
+<script src="js/jszip.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        kendo.culture("zh-CN");
+        dataSource = new kendo.data.DataSource({
+            transport: {
+                read:  {
+                    url:  "/getemployee",
+                    dataType: "json",
+                    type: "post"
+                },
+                update: {
+                    url:  "/updateemployee",
+                    type: "post"
+                },
+                destroy: {
+                    url:  "/removeemployee",
+                    dataType: "json",
+                    type: "post"
+                },
+                create: {
+                    url:  "/addemployee",
+                    dataType: "json",
+                    type: "post"
+                },
+                parameterMap: function(options, operation) {
+                    if (operation !== "read" && options.models) {
+                        return {models: kendo.stringify(options.models)};
+                    }
+                }
+            },
+            batch: true,
+            pageSize: 10,
+            schema: {
+                model: {
+                    id: "_id",
+                    fields: {
+                        _id: { editable: false, nullable: true },
+                        em_name: {type: "string", validation: { required: true}},
+                        em_sex: {type: "string", validation: { required: true}},
+                        em_age: {type:"number",validation:{required: true}},
+                        em_address: {type: "string", validation: { required: true}},
+                        em_id: {type: "string", validation: { required: true}},
+                        em_phone: {type: "string", validation: { required: true}},
+                        em_email: {type: "string", validation: { required: true,email:true}},
+                        em_job: {type: "string", validation: { required: true}},
+                        em_state: {type: "string", validation: { required: true}},
+                        em_jointime: {type: "date", validation: { required: true}}
+                    }
+                }
+            }
+        });
+
+
+        $("#employeegrid").kendoGrid({
+            dataSource: dataSource,
+            pageable: true,
+            height: 700,
+            toolbar: ["create","excel"],
+            excel: {
+                fileName: "职员信息.xlsx",
+                proxyURL: "/getemployee",
+                filterable: true
+            },
+            sortable: {
+                mode: "single",
+                allowUnsort: false
+            },
+            filterable: {
+                mode: "row"
+            },
+            columns: [
+                { field: "em_name", title: "姓名" },
+                { field: "em_sex", title: "性别" },
+                { field: "em_age", title: "年龄" },
+                { field: "em_address", title: "地址" ,filterable: false },
+                { field: "em_id", title: "身份证" },
+                { field: "em_phone", title: "手机号" },
+                { field: "em_email", title: "邮箱" },
+                { field: "em_job", title: "岗位" },
+                { field: "em_state", title: "状态" },
+                { field: "em_jointime", title: "入职时间" , template: '#= kendo.toString(em_jointime,"yyyy/MM/dd") #'},
+                { command: ["edit", "destroy"], title: "",width:"190px"}],
+            editable: "inline"
+        });
+
+
+        function renderChart()
+        {
+            $("#chart").kendoChart({
+                title: {
+                    position: "bottom",
+                    text: "职工年龄分布"
+                },
+                legend: {
+                    visible: false
+                },
+                chartArea: {
+                    background: ""
+                },
+                dataSource: {
+                    transport: {
+                        read: {
+                            url: "/getEmployeeAgeChart",
+                            dataType: "json",
+                            type: "post"
+                        },
+
+                        schema: {
+                            model: {
+                                fields: {
+                                    count: { type: "number" },
+                                    age: { type: "string" }
+                                }
+                            }
+                        }
+                    }
+                },
+                seriesDefaults: {
+                    labels: {
+                        visible: true,
+                        background: "transparent",
+                        template: "#= category #: \n #= value#%"
+                    }
+                },
+                series: [{
+                    type: "pie",
+                    startAngle: 150,
+                    field: "count",
+                    categoryField:"age"
+                }],
+                tooltip: {
+                    visible: true,
+                    format: "{0}%"
+                }
+            });
+
+            //员工性别比例图
+            $("#sexchart").kendoChart({
+                title: {
+                    position: "bottom",
+                    text: "性别比例"
+                },
+                legend: {
+                    visible: false
+                },
+                chartArea: {
+                    background: ""
+                },
+                dataSource: {
+                    transport: {
+                        read: {
+                            url: "/getEmployeeSexChart",
+                            dataType: "json",
+                            type: "post"
+                        },
+
+                        schema: {
+                            model: {
+                                fields: {
+                                    count: { type: "number" },
+                                    sex: { type: "string" }
+                                }
+                            }
+                        }
+                    }
+                },
+                seriesDefaults: {
+                    labels: {
+                        visible: true,
+                        background: "transparent",
+                        template: "#= category #: \n #= value#%"
+                    }
+                },
+                series: [{
+                    type: "pie",
+                    startAngle: 150,
+                    field: "count",
+                    categoryField:"sex"
+                }],
+                tooltip: {
+                    visible: true,
+                    format: "{0}%"
+                }
+            });
+
+        }
+        //渲染图表
+        renderChart();
+        
+
+    });
+</script>

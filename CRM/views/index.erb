@@ -1,0 +1,197 @@
+
+<div class="col-lg-8">
+    <div class="smart-widget">
+        <div class="smart-widget-header">
+            我的日程安排
+        </div>
+
+        <div id="scheduler"></div>
+    </div>
+</div>
+
+<div class="col-lg-4" id="my-task" ng-app="myApp" ng-controller="indexController">
+    <div class="smart-widget">
+        <div class="smart-widget-header">
+            <span class="badge badge-danger pull-right">{{Tasks.length}}</span>
+            我的工作便签
+        </div>
+
+        <div class="smart-widget-inner" >
+            <div class="smart-widget-body clearfix">
+                <div ><input type="text" class="form-control input-sm" ng-model="taskname"> </div>
+                <p></p>
+                <a class="btn btn-success btn-sm pull-right" ng-click="addTask()" ><i class="fa fa-plus"></i>添加工作便签</a>
+            </div>
+
+            <ul class="list-group to-do-list sortable-list no-border" ng-repeat="task in Tasks" >
+
+                <li class="list-group-item" draggable="true" ng-if="task['todo_state'] == 0">
+                    <div class="custom-checkbox todo-checkbox">
+                        <input type="checkbox" value="None" id="todo-check{{$index}}" ng-click="changestate($event,$index)" >
+                        <label for="todo-check{{$index}}"></label>
+                    </div>
+                        {{ task['todo_name'] }}
+                    <div class="remove-list">
+                        <i class="ion-close" ng-click="removeTask($index)"></i>
+                    </div>
+                </li>
+
+                <li class="list-group-item selected" draggable="true" ng-if="task['todo_state'] != 0">
+                    <div class="custom-checkbox todo-checkbox">
+                        <input type="checkbox" value="None" checked = "checked" id="todo-check{{$index}}" ng-click="changestate($event,$index)">
+                        <label for="todo-check{{$index}}"></label>
+                    </div>
+                        {{ task['todo_name'] }}
+                    <div class="remove-list">
+                        <i class="ion-close" ng-click="removeTask($index)"></i>
+                    </div>
+                </li>
+
+
+            </ul>
+        </div><!-- ./smart-widget-inner -->
+    </div><!-- ./smart-widget -->
+</div>
+
+
+<script>
+    $(function() {
+        kendo.culture("zh-CN");
+        $("#scheduler").kendoScheduler({
+            height: 600,
+            views: [
+                {
+                    type:"day",
+                    showWorkHours: false
+                },
+                { type: "workWeek", selected: true },
+                "week",
+                "month",
+                "agenda"
+            ],
+            dataSource: {
+                batch: true,
+                transport: {
+                    read: {
+                        url: "/readschedule",
+                        dataType: "json",
+                        type : "post"
+                    },
+                    update: {
+                        url: "/updateschedule",
+                        dataType: "json",
+                        type : "post"
+                    },
+                    create: {
+                        url: "/createschedule",
+                        dataType: "json",
+                        type : "post"
+                    },
+                    destroy: {
+                        url: "/destroyschedule",
+                        dataType: "json",
+                        type : "post"
+                    },
+                    parameterMap: function(options, operation) {
+                        if (operation !== "read" && options.models) {
+                            return {models: kendo.stringify(options.models)};
+                        }
+                    }
+                },
+                schema: {
+                    model: {
+                        id: "TaskID",
+                        fields: {
+                            TaskID: { },
+                            title: { from: "Title", defaultValue: "No title", validation: { required: true } },
+                            start: { type: "date", from: "Start" },
+                            end: { type: "date", from: "End" },
+                            description: { from: "Description" },
+                            isAllDay: { type: "boolean", from: "IsAllDay" }
+                        }
+                    }
+                }
+            }
+        });
+    });
+
+
+    var app = angular.module('myApp', []);
+    app.controller('indexController', function($scope, $http) {
+    $http.get("/gettask")
+    .success(function(response) {console.log($scope.Tasks = response)});
+
+
+    $scope.addTask = function()
+    {
+        var obj = {todo_name:$scope.taskname,todo_state:0};
+        $scope.Tasks.push(obj);
+        $.ajax({
+            url : "/addtask",
+            data:{task: $scope.taskname},
+            type: "post",
+            dataType: "json",
+            success : function(data) {
+            }
+        });
+
+    };
+
+    $scope.removeTask = function(task)
+    {
+        $.ajax({
+            url : "/removetask",
+            data:{task: $scope.Tasks[task].todo_name},
+            type: "post",
+            dataType: "json",
+            success : function(data) {
+            }
+        });
+        $scope.Tasks.splice(task,1);
+
+    };
+
+    $scope.changestate = function($event,v)
+    {
+        var checkbox  = $event.target;
+        var state;
+        if (checkbox.checked) {
+            state = 1;
+            $scope.Tasks[v].todo_state = state;
+        }
+        else
+        {
+            state = 0;
+            $scope.Tasks[v].todo_state = state;
+        }
+
+        $.ajax({
+            url: "/changetask",
+            data:{taskname: $scope.Tasks[v].todo_name,taskstate:state},
+            type:'post',
+            success:function(data)
+            {}
+        });
+    };
+});
+
+
+angular.bootstrap(document.getElementById("my-task"), ['myApp']);
+
+</script>
+
+
+
+
+<style>
+.k-scheduler-footer
+{
+    /* make them invisible */
+    display: none;
+ 
+    /* prevent height and paddings from influencing the size calculations */
+    height: 0;
+    padding: 0;
+    overflow: hidden;
+}
+</style>
