@@ -1,8 +1,7 @@
 # -CRM
 会社の管理システム
 
-
-MAC系统先安装环境
+# MAC系统先安装环境
 1 安装homebrew套件管理器 http://brew.sh/index_ja.html
 2 homebrew安装rbenv    
   brew update
@@ -32,7 +31,7 @@ MAC系统先安装环境
 浏览器中访问 ip地址:端口号 即可访问
   
   
-windows下安装
+# windows下安装
   下载rubyinstaller以及DevKit http://rubyinstaller.org/
   官网下载mongodb数据库
   
