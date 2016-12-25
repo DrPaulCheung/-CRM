@@ -41,6 +41,7 @@ end
 get '/getMyAttribute' do
 	result = $db[:db_users].find( "user_name" => session[:username]).to_a.first.to_json;
 	return result;
+
 end
 
 
